@@ -21,3 +21,8 @@ def _list(): # URL '/question/list/'로 접근했을 때 실행될 라우트 함
 def detail(question_id):
     question = Question.query.get_or_404(question_id)
     return render_template('question/question_detail.html', question=question)
+
+# 질문 등록 라우트 함수 추가
+@bp.route('/create/')
+def create():
+    return render_template('question/question_form.html')
