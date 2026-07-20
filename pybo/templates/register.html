@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+</head>
+<body>
+    <h2>회원가입</h2>
+    <form method="POST" action="">
+        <!-- CSRF 토큰 태그를 반드시 넣어주어야 에러가 나지 않습니다 -->
+        {{ form.csrf_token }}
+
+        <div>
+            {{ form.username.label }}<br>
+            {{ form.username() }}
+            <!-- 해당 필드에 에러가 있다면 반복문으로 출력합니다 -->
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <br>
+
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email() }}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <br>
+
+        <div>
+            {{ form.password.label }}<br>
+            {{ form.password() }}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <br>
+
+        <div>
+            {{ form.confirm_password.label }}<br>
+            {{ form.confirm_password() }}
+            {% if form.confirm_password.errors %}
+                {% for error in form.confirm_password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <br>
+
+        {{ form.submit() }}
+    </form>
+</body>
+</html>

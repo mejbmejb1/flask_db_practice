@@ -1,0 +1,34 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+
+class RegistrationForm(FlaskForm):
+    # 1. 필수 입력 + 길이 제한
+    username = StringField('사용자 이름', validators=[
+        DataRequired(message="이름은 필수 입력 항목입니다."),
+        Length(min=2, max=20, message="이름은 2자 이상 20자 이하로 입력해주세요.")
+    ])
+
+    # 2. 필수 입력 + 이메일 형식 검무
+    email = StringField('이메일', validators=[
+        DataRequired(message="이메일은 필수 입력 항목입니다."),
+        Email(message="올바른 이메일 형식이 아닙니다.")
+    ])
+
+    # 3. 필수 입력 + 비밀번호 확인 일치 여부
+    password = PasswordField('비밀번호', validators=[
+        DataRequired(message="비밀번호는 필수 입력 항목입니다.")
+    ])
+    confirm_password = PasswordField('비밀번호 확인', validators=[
+        DataRequired(message="비밀번호 확인을 입력해주세요."),
+        EqualTo('password', message="비밀번호가 일치하지 않습니다.")
+    ])
+
+    submit = SubmitField('가입하기')
+
+    # 4. 커스텀 검증기 (Custom Validator)
+    # validate_필드명 형태로 메서드를 만들면 해당 필드를 검증할 때 자동으로 실행됩니다.
+    def validate_username(self, username):
+        banned_names = ['admin', 'root', 'administrator']
+        if username.data.lower() in banned_names:
+            raise ValidationError('사용할 수 없는 이름입니다.')
