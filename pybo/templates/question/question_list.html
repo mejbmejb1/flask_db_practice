@@ -22,7 +22,7 @@
             <td>
                 <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
             </td>
-            <td>{{ question.create_date }}</td>
+            <td>{{ question.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
         </tr>
         {% endfor %}
         {% else %}
