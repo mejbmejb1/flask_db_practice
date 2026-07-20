@@ -32,4 +32,3 @@ class Answer(db.Model):
 
     def __repr__(self):
         return f'<Answer to Question {self.question_id}>'
-    

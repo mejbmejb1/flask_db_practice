@@ -16,6 +16,7 @@ def _list(): # URL '/question/list/'로 접근했을 때 실행될 라우트 함
     # 준비된 질문 목록(question_list) 데이터를 템플릿(HTML) 파일에 전달하며 화면을 그린다(렌더링)
     return render_template('question/question_list.html', question_list=question_list)
 
+# /detail/question_id 번호 처리 라우트
 @bp.route('/detail/<int:question_id>/')
 def detail(question_id):
     question = Question.query.get_or_404(question_id)
