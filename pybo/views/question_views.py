@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, url_for, redirect, request
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
 from pybo.models import Question
 
-from pybo.forms import QuestionForm
+from pybo.forms import QuestionForm, AnswerForm 
 from datetime import datetime
 from pybo import db
 
@@ -22,8 +22,9 @@ def _list(): # URL '/question/list/'로 접근했을 때 실행될 라우트 함
 # /detail/question_id 번호 처리 라우트
 @bp.route('/detail/<int:question_id>/')
 def detail(question_id):
+    form = AnswerForm() # 상세 조회 라우터 내부에 빈 답변 폼 생성
     question = Question.query.get_or_404(question_id)
-    return render_template('question/question_detail.html', question=question)
+    return render_template('question/question_detail.html', question=question, form=form)
 
 # 질문 등록 라우트 함수 추가
 @bp.route('/create/', methods=('GET', 'POST'))

@@ -32,6 +32,21 @@
 
     <!-- textarea / input 묶어서 입력구역을 지정한 form tag -->
     <form action="{{ url_for('answer.create', question_id=question.id) }}" method="post" class="my-3">
+        {{ form.csrf_token }}
+
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in form.errors.items() %}
+            <strong>{{ form[field].label }}</strong>
+            <ul>
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <div class="mb-3">
             <textarea name="content" id="content" class="form-control" rows="10"></textarea>
         </div>
