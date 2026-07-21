@@ -1,5 +1,11 @@
+'''
+forms.py
+    각 필드에 적용하는 검증 규칙을 정한다
+
+'''
+
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 class RegistrationForm(FlaskForm):
@@ -9,7 +15,7 @@ class RegistrationForm(FlaskForm):
         Length(min=2, max=20, message="이름은 2자 이상 20자 이하로 입력해주세요.")
     ])
 
-    # 2. 필수 입력 + 이메일 형식 검무
+    # 2. 필수 입력 + 이메일 형식
     email = StringField('이메일', validators=[
         DataRequired(message="이메일은 필수 입력 항목입니다."),
         Email(message="올바른 이메일 형식이 아닙니다.")
@@ -32,3 +38,8 @@ class RegistrationForm(FlaskForm):
         banned_names = ['admin', 'root', 'administrator']
         if username.data.lower() in banned_names:
             raise ValidationError('사용할 수 없는 이름입니다.')
+        
+# 제목(subject), 내용(content) 필드에 필수 입력임을 알리는 class  
+class QuestionForm(FlaskForm):
+    subject = StringField('제목', validators=[DataRequired('제목은 필수 입력 항목입니다.')])
+    content = TextAreaField('내용', validators=[DataRequired('내용은 필수 입력 항목입니다.')])

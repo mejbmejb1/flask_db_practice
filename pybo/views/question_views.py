@@ -1,9 +1,12 @@
 # flask에서 Blueprint를 가져온다
 # HTML 렌더링을 위한 render_template을 가져온다
-from flask import Blueprint, render_template
-
+from flask import Blueprint, render_template, url_for, redirect, request
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
 from pybo.models import Question
+
+from pybo.forms import QuestionForm
+from datetime import datetime
+from pybo import db
 
 # 'question'이라는 이름의 블루프린트를 생성하고, 이 블루프린트의 모든 URL 시작점(/question)을 지정
 bp = Blueprint('question', __name__, url_prefix='/question')
@@ -23,6 +26,15 @@ def detail(question_id):
     return render_template('question/question_detail.html', question=question)
 
 # 질문 등록 라우트 함수 추가
-@bp.route('/create/')
+@bp.route('/create/', methods=('GET', 'POST'))
 def create():
-    return render_template('question/question_form.html')
+    form = QuestionForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        # 등록할 내용을 Question table에 넣어서 등록한다
+        target_question = Question(subject=form.subject.data, content=form.content.data, create_date=datetime.now())
+        log_temp = target_question.__repr__()
+        print(log_temp)
+        db.session.add(target_question)
+        db.session.commit()
+        return redirect(url_for('question._list'))    
+    return render_template('question/question_form.html', form=form)
