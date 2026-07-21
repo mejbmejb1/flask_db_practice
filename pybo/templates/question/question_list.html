@@ -11,7 +11,7 @@
         </thead>
         <tbody>
         {% if question_list %}
-        {% for question in question_list %}
+        {% for question in question_list.items %} {# question_list 의 세부 아이템을 for문으로 돌려서 조회한다#}
         <tr>
             <td>{{ loop.index }}</td>
             <td>
@@ -27,6 +27,47 @@
         {% endif %}
         </tbody>
     </table>
+
+    <ul class="pagination justify-content-center">
+        {% if question_list.has_prev %} {# 이전 페이지 사용이 가능한 경우 #}
+        <li class="page-item"> 
+            <a class="page-link" href="?page={{ question_list.prev_num }}">이전</a>
+        </li>
+        {% else %} {# 이전 페이지를 이용하지 못하는 경우 #}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+
+        {% for page_num in question_list.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != question_list.page %} {# 페이지 리스트에 있지만 현재 보여주고 있지 않는 페이지 #}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+                {% else %} {# 현재 보여주고 있는 페이지 표시 #}
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">{{ page_num }}</a>
+                </li>
+                {% endif %}
+            {% else %} {# page 번호가 아닌 경우. 생략 기호(...) 부분 #}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">...</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if question_list.has_next %} {# 다음 페이지를 사용이 가능한 경우 #}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ question_list.next_num }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"> {# 다음 페이지 사용이 불가능한 경우 #}
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+
     <a href="{{ url_for('question.create') }}" class="btn btn-primary">질문 등록하기</a>
 </div>
 {% endblock %}
