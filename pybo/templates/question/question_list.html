@@ -13,11 +13,16 @@
         {% if question_list %}
         {% for question in question_list.items %} {# question_list 의 세부 아이템을 for문으로 돌려서 조회한다#}
         <tr>
-            <td>{{ loop.index }}</td>
+            <td>
+                {{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}
+            </td>
             <td>
                 <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
+                {% if question.answer_set|length > 0 %}
+                <span class="text-danger small ms-2">{{ question.answer_set|length }}</span>
+                {% endif %}
             </td>
-            <td>{{ question.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ question.create_date|datetime }}</td>
         </tr>
         {% endfor %}
         {% else %}

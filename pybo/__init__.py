@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from pybo.filter import format_datetime
 
 import config
 
@@ -25,5 +26,8 @@ def create_app(): #applictaion factory 함수
     app.register_blueprint(main_views.bp)
     app.register_blueprint(question_views.bp)
     app.register_blueprint(answer_views.bp)
+
+    # jinja_env 필터에 등록
+    app.jinja_env.filters['datetime'] = format_datetime
 
     return app
