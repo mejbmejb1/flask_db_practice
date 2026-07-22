@@ -11,13 +11,15 @@ from pybo import db
 # 'question'이라는 이름의 블루프린트를 생성하고, 이 블루프린트의 모든 URL 시작점(/question)을 지정
 bp = Blueprint('question', __name__, url_prefix='/question')
 
+per_page_num = 10
+
 @bp.route('/list/')
 def _list(): # URL '/question/list/'로 접근했을 때 실행될 라우트 함수를 정의
     # 현재 페이지 번호 가져오기 (기본값은 1)
     page = request.args.get('page', type=int, default=1)
     # 데이터베이스의 Question 테이블에서 모든 질문 데이터를 가져온다
     # 작성일(create_date)의 역순(desc - 최신순)으로 정렬하여 question_list 변수에 담는다. + 한 페이지당 개수를 조회하는 기능 추가(paginate)
-    question_list = Question.query.order_by(Question.create_date.desc()).paginate(page=page, per_page=10)
+    question_list = Question.query.order_by(Question.create_date.desc()).paginate(page=page, per_page=per_page_num)
     # 준비된 질문 목록(question_list) 데이터를 템플릿(HTML) 파일에 전달하며 화면을 그린다(렌더링)
     return render_template('question/question_list.html', question_list=question_list)
 

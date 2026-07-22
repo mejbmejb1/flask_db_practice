@@ -13,13 +13,13 @@
         {% if question_list %}
         {% for question in question_list.items %} {# question_list 의 세부 아이템을 for문으로 돌려서 조회한다#}
         <tr>
-            <td>
+            <td> {# Jinja2 활용. 번호 = 전체 게시물 개수 - (현재 페이지 - 1) X 페이지당 게시물 개수 - 나열 인덱스 #}
                 {{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}
             </td>
             <td>
                 <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
-                {% if question.answer_set|length > 0 %}
-                <span class="text-danger small ms-2">{{ question.answer_set|length }}</span>
+                {% if question.answer_set|length > 0 %} {# 게시한 내용의 답글이 0개 초과인 경우 #}
+                <span class="text-danger small ms-2">{{ question.answer_set|length }}</span> {# 답변 개수를 표시한다 #}
                 {% endif %}
             </td>
             <td>{{ question.create_date|datetime }}</td>
