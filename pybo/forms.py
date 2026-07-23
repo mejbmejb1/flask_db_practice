@@ -57,3 +57,8 @@ class UserCreateForm(FlaskForm):
     ])
     password2 = PasswordField('비밀번호 확인', validators=[DataRequired()])
     email = EmailField('이메일', validators=[DataRequired(), Email()])
+
+# 로그인 폼 클래스 추가
+class UserLoginForm(FlaskForm):
+    username = StringField('사용자 이름', validators=[DataRequired()])
+    password = PasswordField('비밀번호', validators=[DataRequired()])
