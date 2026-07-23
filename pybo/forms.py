@@ -5,8 +5,8 @@ forms.py
 '''
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, EmailField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 class RegistrationForm(FlaskForm):
     # 1. 필수 입력 + 길이 제한
@@ -47,3 +47,13 @@ class QuestionForm(FlaskForm):
 # 답변 검증용 폼 클래스 추가
 class AnswerForm(FlaskForm):
     content = TextAreaField('내용', validators=[DataRequired('내용은 필수 입력 항목입니다.')])
+
+
+class UserCreateForm(FlaskForm):
+    username = StringField('사용자 이름', validators=[DataRequired(), Length(min=3, max=25)])
+    password1 = PasswordField('비밀번호', validators=[
+        DataRequired(),
+        EqualTo('password2', message='비밀번호가 일치하지 않습니다.')
+    ])
+    password2 = PasswordField('비밀번호 확인', validators=[DataRequired()])
+    email = EmailField('이메일', validators=[DataRequired(), Email()])
