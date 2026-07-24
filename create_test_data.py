@@ -17,7 +17,8 @@ with app.app_context():
         Question(
             subject=f'테스트 데이터입니다:[{i:03d}]', 
             content='내용입니다.', 
-            create_date=datetime.now()
+            create_date=datetime.now(),
+            user_id = 1
         )
         for i in range(300)
     ]
