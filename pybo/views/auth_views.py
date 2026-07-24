@@ -48,6 +48,7 @@ def login():
     return render_template('auth/login.html', form=form)
 
 # 어떤 라우트 함수가 실행되든 사전에 세션을 검사하여 로그인한 사용자의 DB 객체를 g.user 변수 상시 적재
+# request 이전에 작동시킬 함수정의
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -59,5 +60,5 @@ def load_logged_in_user():
 # 로그아웃 라우트 함수
 @bp.route('/logout/')
 def logout():
-    session.clear()
-    return redirect(url_for('main.index'))
+    session.clear() # session 삭제
+    return redirect(url_for('main.index')) #main.index로 복귀

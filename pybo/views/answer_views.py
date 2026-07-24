@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, url_for, request, redirect, render_template
+from flask import Blueprint, url_for, request, redirect, render_template, g
 from pybo import db
 from pybo.models import Question, Answer
 from pybo.forms import AnswerForm
@@ -14,7 +14,7 @@ def create(question_id):
     if form.validate_on_submit(): # 유효성검사
         # 'content' 추출
         content = request.form['content']
-        answer = Answer(content=content, create_date=datetime.now())
+        answer = Answer(content=content, create_date=datetime.now(), user= g.user)
         question.answer_set.append(answer)
         db.session.commit()
         return redirect(url_for('question.detail', question_id=question_id))

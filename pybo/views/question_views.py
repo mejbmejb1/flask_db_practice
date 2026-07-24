@@ -1,6 +1,6 @@
 # flask에서 Blueprint를 가져온다
 # HTML 렌더링을 위한 render_template을 가져온다
-from flask import Blueprint, render_template, url_for, redirect, request
+from flask import Blueprint, render_template, url_for, redirect, request, g
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
 from pybo.models import Question
 
@@ -36,7 +36,7 @@ def create():
     form = QuestionForm()
     if request.method == 'POST' and form.validate_on_submit():
         # 등록할 내용을 Question table에 넣어서 등록한다
-        target_question = Question(subject=form.subject.data, content=form.content.data, create_date=datetime.now())
+        target_question = Question(subject=form.subject.data, content=form.content.data, create_date=datetime.now(), user= g.user)
         log_temp = target_question.__repr__()
         print(log_temp)
         db.session.add(target_question)

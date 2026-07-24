@@ -14,6 +14,9 @@ class Question(db.Model):
     subject = db.Column(db.String(max_string), nullable=False) # 200자까지 문자열 제한이 있으며 null을 허용하지 않겠다.
     content = db.Column(db.Text(), nullable=False) 
     create_date = db.Column(db.DateTime(), nullable=False) # DateTime을 받아오며 null을 허용하지 않겠다
+    # 글쓴이 외래키 및 관계 설정 추가 (기존 데이터 고려 nullable=True 우선 허용)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user = db.relationship('User', backref=db.backref('question_set'))
 
     # 쉘이나 로그에서 객체를 보기 쉽게 출력해주는 메서드
     def __repr__(self):
@@ -29,6 +32,8 @@ class Answer(db.Model):
     question = db.relationship('Question', backref=db.backref('answer_set', cascade='all, delete-orphan'))
     content = db.Column(db.Text(), nullable=False)
     create_date = db.Column(db.DateTime(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user = db.relationship('User', backref=db.backref('answer_set'))
 
     def __repr__(self):
         return f'<Answer to Question {self.question_id}>'
@@ -36,6 +41,6 @@ class Answer(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
+    username = db.Column(db.String(150), unique=True, nullable=False) # unique = True 중복 막겠다
     password = db.Column(db.String(max_string), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
