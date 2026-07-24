@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash # chec
 from pybo import db
 from pybo.forms import UserCreateForm, UserLoginForm # UserLoginForm 임포트
 from pybo.models import User
+import functools # 함수 도구 모듈 임포트
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -62,3 +63,12 @@ def load_logged_in_user():
 def logout():
     session.clear() # session 삭제
     return redirect(url_for('main.index')) #main.index로 복귀
+
+# functools.wraps 
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(*args, **kwargs):
+        if g.user is None: # g.user == none 유저 로그인이 안되어 있을때 로그인 페이지로 이동
+            return redirect(url_for('auth.login'))
+        return view(*args, **kwargs)
+    return wrapped_view

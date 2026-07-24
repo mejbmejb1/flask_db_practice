@@ -3,10 +3,12 @@ from flask import Blueprint, url_for, request, redirect, render_template, g
 from pybo import db
 from pybo.models import Question, Answer
 from pybo.forms import AnswerForm
+from pybo.views.auth_views import login_required
 
 bp = Blueprint('answer', __name__, url_prefix='/answer')
 
 @bp.route('/create/<int:question_id>/', methods=('POST',))
+@login_required
 def create(question_id):
     # Question 테이블에서 id 값 보고 조회하는데 없으면 404에러 보냄
     question = Question.query.get_or_404(question_id)

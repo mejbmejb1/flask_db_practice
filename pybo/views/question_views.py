@@ -7,6 +7,7 @@ from pybo.models import Question
 from pybo.forms import QuestionForm, AnswerForm 
 from datetime import datetime
 from pybo import db
+from pybo.views.auth_views import login_required
 
 # 'question'이라는 이름의 블루프린트를 생성하고, 이 블루프린트의 모든 URL 시작점(/question)을 지정
 bp = Blueprint('question', __name__, url_prefix='/question')
@@ -32,6 +33,7 @@ def detail(question_id):
 
 # 질문 등록 라우트 함수 추가
 @bp.route('/create/', methods=('GET', 'POST'))
+@login_required
 def create():
     form = QuestionForm()
     if request.method == 'POST' and form.validate_on_submit():
