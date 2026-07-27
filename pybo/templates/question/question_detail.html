@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container my-3">
 
-    <!-- 클릭한 question 제목/내용 조회 -->
+    {# 클릭한 question 제목/내용 조회 #}
     <h2 class="border-bottom py-2">{{ question.subject }}</h2>
     <div class="card my-3">
         <div class="card-body">
@@ -14,10 +14,17 @@
                     <div>{{ question.create_date|datetime }}</div>
                 </div>
             </div>
+            {% if g.user == question.user %} {# 수정/삭제 기능 추가 글쓴이와 현재유저랑 동일 여부 확인 #}
+            <div class="my-3">
+                <a href="{{ url_for('question.modify', question_id=question.id) }}"
+                class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)" data-uri="{{ url_for('question.delete', question_id=question.id) }}"class="delete btn btn-sm btn-outline-secondary">삭제</a>
+            </div>
+            {% endif %}
         </div>
     </div> 
 
-    <!-- 현재 답변 리스트 확인 가능 -->
+    {# 현재 답변 리스트 확인 가능 #}
     <h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
     {% for answer in question.answer_set %}
     <div class="card my-3">
@@ -34,7 +41,7 @@
     </div>
     {% endfor %}
 
-    <!-- textarea / input 묶어서 입력구역을 지정한 form tag -->
+    {# textarea / input 묶어서 입력구역을 지정한 form tag #}
     <form action="{{ url_for('answer.create', question_id=question.id) }}" method="post" class="my-3">
         {{ form.csrf_token }}
         {% include "form_errors.html" %}

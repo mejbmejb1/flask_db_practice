@@ -11,7 +11,21 @@
   {% include "navbar.html" %}
   <!--기본 템플릿 안에 삽입될 내용 Start-->
 	{% block content %}
-	{% endblock %}
+  {% endblock %}
 	<!--기본 템플릿 안에 삽입될 내용 End-->
+  
+  <!-- 공통 JS -->
+  <script type='text/javascript'>
+  const delete_elements = document.getElementsByClassName("delete");
+  Array.from(delete_elements).forEach(function(element){
+    element.addEventListener('click', function(){
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+  });</script>
+  <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+  {% block script %}
+  {% endblock %}
 </body>
 </html>

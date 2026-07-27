@@ -1,6 +1,6 @@
 # flask에서 Blueprint를 가져온다
 # HTML 렌더링을 위한 render_template을 가져온다
-from flask import Blueprint, render_template, url_for, redirect, request, g
+from flask import Blueprint, render_template, url_for, redirect, request, g, flash
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
 from pybo.models import Question
 
@@ -45,3 +45,33 @@ def create():
         db.session.commit()
         return redirect(url_for('question._list'))    
     return render_template('question/question_form.html', form=form)
+
+@bp.route('/modify/<int:question_id>/', methods=('GET', 'POST'))
+@login_required
+def modify(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash('수정권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+
+    if request.method == 'POST':
+        form = QuestionForm()
+        if form.validate_on_submit():
+            form.populate_obj(question) # 폼 데이터를 question 객체에 동적 복사
+            db.session.commit()
+            return redirect(url_for('question.detail', question_id=question_id))
+    else:
+        # GET 요청일 경우 기존 데이터를 폼에 채워서 렌더링
+        form = QuestionForm(obj=question)
+    return render_template('question/question_form.html', form=form)
+
+@bp.route('/delete/<int:question_id>/')
+@login_required
+def delete(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash('삭제권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+    db.session.delete(question)
+    db.session.commit()
+    return redirect(url_for('question._list'))
