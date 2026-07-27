@@ -14,7 +14,7 @@ class Question(db.Model):
     subject = db.Column(db.String(max_string), nullable=False) # 200자까지 문자열 제한이 있으며 null을 허용하지 않겠다.
     content = db.Column(db.Text(), nullable=False) 
     create_date = db.Column(db.DateTime(), nullable=False) # DateTime을 받아오며 null을 허용하지 않겠다
-    # 글쓴이 외래키 및 관계 설정 추가 (기존 데이터 고려 nullable=True 우선 허용)
+    # 글쓴이 외래키 및 관계 설정 추가
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('question_set'))
 
@@ -24,7 +24,7 @@ class Question(db.Model):
             subject_preview = self.subject[:10]
         else: # subject가 비어있거나 None이라면
             subject_preview = "No Title"
-        return f'<Question {self.id}: {subject_preview}>'
+        return f'<Question {self.user_id}: {subject_preview}>'
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)

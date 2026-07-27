@@ -33,7 +33,7 @@ def detail(question_id):
 
 # 질문 등록 라우트 함수 추가
 @bp.route('/create/', methods=('GET', 'POST'))
-@login_required
+@login_required # 해당 메서드 만족해야 def create() 실행가능
 def create():
     form = QuestionForm()
     if request.method == 'POST' and form.validate_on_submit():

@@ -16,7 +16,7 @@ import functools # 함수 도구 모듈 임포트
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/signup/', methods=('GET', 'POST'))
-def signup():
+def signup(): # 회원등록 담당
     form = UserCreateForm()
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -66,6 +66,7 @@ def logout():
 
 # functools.wraps 
 def login_required(view):
+    # 메타데이터 유지: 데코레이터를 쓸 때 함수 이름이 전부 wrapped_view로 뭉개지는 걸 방지
     @functools.wraps(view)
     def wrapped_view(*args, **kwargs):
         if g.user is None: # g.user == none 유저 로그인이 안되어 있을때 로그인 페이지로 이동
