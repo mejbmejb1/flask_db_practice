@@ -24,9 +24,12 @@ def signup(): # 회원등록 담당
             user = User(username=form.username.data,
                         password=generate_password_hash(form.password1.data),
                         email=form.email.data)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('main.index'))
+            if user.username == 'admin':
+                flash('\'admin\' 관리자 계정은 사용이 불가능합니다!')
+            else:
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for('main.index'))
         else:
             flash('이미 존재하는 사용자입니다.')
     return render_template('auth/signup.html', form=form)
