@@ -5,6 +5,7 @@
         <thead>
         <tr class="table-dark">
             <th>번호</th>
+            <th>추천</th>
             <th>글쓴이</th>
             <th style="width:50%">제목</th>
             <th>작성일시</th>
@@ -16,6 +17,9 @@
         <tr>
             <td> {# Jinja2 활용. 번호 = 전체 게시물 개수 - (현재 페이지 - 1) X 페이지당 게시물 개수 - 나열 인덱스 #}
                 {{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}
+            </td>
+            <td>
+                {{ question.voter|length }}
             </td>
             <td>
                 {{question.user.username}}
