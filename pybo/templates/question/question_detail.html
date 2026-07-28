@@ -76,9 +76,12 @@
                     <div class="mb-2">answered at</div>
                     <div>{{ answer.create_date|datetime }}</div>
                 </div>
-            </div>
-            {% if g.user == answer.user %}
+            </div>            
             <div class="my-3">
+                <a href="javascript:void(0)" data-uri="{{ url_for('answer.vote', answer_id=answer.id) }}" class="recommend btn btn-sm btn-outline-secondary"> 추천<span class="badge rounded-pill bg-success">{{
+                    answer.voter|length }}</span>
+                </a>
+                {% if g.user == answer.user %}
                 <a href="{{ url_for('answer.modify', answer_id=answer.id) }}"
                     class="btn btn-sm btn-outline-secondary">수정</a>
                 <a href="javascript:void(0)" data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}"
@@ -103,7 +106,7 @@
                         {% endif %}
                     </span>
                     {% if g.user == comment.user %}
-                    <a href="{{ url_for('comment.modify_answer', comment_id=comment.id) }}" class="small">수정</a>,
+                    <a href="{{ url_for('comment.modify_answer', comment_id=comment.id) }}" class="small">수정1</a>,
                     <a href="javascript:void(0)"
                         data-uri="{{ url_for('comment.delete_answer', comment_id=comment.id) }}"
                         class="delete small">삭제</a>
