@@ -11,8 +11,8 @@ max_string = 200
 
 # 중간 테이블 정의
 question_voter = Table(
-    'question_voter',
-    db.metadata,
+    'question_voter', # 데이터베이스에서 쓸 이름
+    db.metadata, # 데이터베이스에서 한꺼번에 관리하기 위해 db 설계도에 등록
     db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), primary_key=True),
     db.Column('question_id', db.Integer, db.ForeignKey('question.id', ondelete='CASCADE'), primary_key=True)
 )
