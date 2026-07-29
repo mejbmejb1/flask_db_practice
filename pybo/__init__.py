@@ -44,6 +44,13 @@ def create_app(): #applictaion factory 함수
         # tables        : 표(Table) 구문 지원
         # toc           : 제목(Header) ID 생성 및 목차 지원 
         html_content = markdown.markdown(text, extensions=['nl2br', 'fenced_code', 'sane_lists', 'tables', 'toc'])
+
+        # 테이블 테그를 생성하여 테이블 적용 코드
+        html_content = html_content.replace(
+            '<table>',
+            '<table class="table table-bordered table-hover">'
+        )
+        
         return Markup(html_content)
 
     # jinja_env 필터에 등록
