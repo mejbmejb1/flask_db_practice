@@ -2,27 +2,69 @@
 # HTML 렌더링을 위한 render_template을 가져온다
 from flask import Blueprint, render_template, url_for, redirect, request, g, flash
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
-from pybo.models import Question
+from pybo.models import Question, Answer, User, question_voter
 
 from pybo.forms import QuestionForm, AnswerForm 
 from datetime import datetime
 from pybo import db
 from pybo.views.auth_views import login_required
+from sqlalchemy import func, distinct # func 파이썬에세 SQL 함수를 사용 가능하게 도와준다
 
 # 'question'이라는 이름의 블루프린트를 생성하고, 이 블루프린트의 모든 URL 시작점(/question)을 지정
 bp = Blueprint('question', __name__, url_prefix='/question')
 
 per_page_num = 10
+default_page = 1
 
 @bp.route('/list/')
 def _list(): # URL '/question/list/'로 접근했을 때 실행될 라우트 함수를 정의
     # 현재 페이지 번호 가져오기 (기본값은 1)
-    page = request.args.get('page', type=int, default=1)
+    page = request.args.get('page', type=int, default=default_page)
+    kw = request.args.get('kw', type=str, default='')   # 검색어
+    so = request.args.get('so', type=str, default='recent')  # 정렬 기준
+
+    # 기본 쿼리
+    question_list = Question.query
+
+    # 2. 검색 (kw) 조건 처리
+    if kw:
+        search = '%%{}%%'.format(kw)
+        # 검색한 글에서 답변있는지 확인한다
+        sub_query = db.session.query(Answer.question_id, Answer.content, User.username).join(User, Answer.user_id == User.id).subquery()
+
+        question_list = (question_list 
+            .outerjoin(sub_query, sub_query.c.question_id == Question.id)
+            .filter(Question.subject.ilike(search) |
+                    Question.content.ilike(search) |
+                    sub_query.c.content.ilike(search) |
+                    Question.user.has(User.username.ilike(search)) |
+                    sub_query.c.username.ilike(search)))
+
+    # 3. 정렬 (so) 및 그룹화 처리
+    if so == 'recommend':
+        # 매핑 테이블(question_voter)을 직접 outerjoin하고, 그 안의 user_id 개수를 distinct하게 집계합니다.
+        question_list = (question_list
+            .outerjoin(question_voter, Question.id == question_voter.c.question_id) 
+            .group_by(Question.id)
+            .order_by(func.count(distinct(question_voter.c.user_id)).desc(), Question.create_date.desc()))
+
+    elif so == 'popular':
+        # 인기순 정렬 (답변수 기준)
+        question_list = (question_list
+            .outerjoin(Answer, Answer.question_id == Question.id)
+            .group_by(Question.id)
+            .order_by(func.count(distinct(Answer.id)).desc(), Question.create_date.desc()))
+
+    else:  # recent (최신순)
+        question_list = (question_list
+        .group_by(Question.id)
+        .order_by(Question.create_date.desc()))
+
     # 데이터베이스의 Question 테이블에서 모든 질문 데이터를 가져온다
-    # 작성일(create_date)의 역순(desc - 최신순)으로 정렬하여 question_list 변수에 담는다. + 한 페이지당 개수를 조회하는 기능 추가(paginate)
-    question_list = Question.query.order_by(Question.create_date.desc()).paginate(page=page, per_page=per_page_num)
+    # 작성일(create_date)의 역순(desc - 최신순)으로 정렬하여 question_list 변수에 담는다. + 한 페이지당 개수를 조회하는 기능 추가(paginate)    
+    question_list = question_list.paginate(page=page, per_page=per_page_num)
     # 준비된 질문 목록(question_list) 데이터를 템플릿(HTML) 파일에 전달하며 화면을 그린다(렌더링)
-    return render_template('question/question_list.html', question_list=question_list)
+    return render_template('question/question_list.html', question_list=question_list, page=page, kw=kw, so=so)
 
 # /detail/question_id 번호 처리 라우트
 @bp.route('/detail/<int:question_id>/')
