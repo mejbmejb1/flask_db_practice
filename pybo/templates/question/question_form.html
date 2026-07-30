@@ -2,9 +2,10 @@
 {% block content %}
 <div class="container">
     <h5 class="my-3 border-bottom pb-2">질문등록</h5>
-    <form method="post" class="my-3">
+    <form method="post" class="my-3" novalidate enctype="multipart/form-data">
         {{ form.csrf_token }}
-                
+        
+        {# 오류 표시 - start #}
         {% if form.errors %}
         <div class="alert alert-danger" role="alert">
             {% for field, errors in form.errors.items() %}
@@ -17,6 +18,7 @@
             {% endfor %}
         </div>
         {% endif %}
+        {# 오류 표시 - end #}
 
         <div class="mb-3">
             <label for="subject" class="form-label">제목</label>
@@ -26,6 +28,11 @@
             <label for="content" class="form-label">내용</label>
             <textarea class="form-control" name="content" id="content" rows="10">{{ form.content.data or '' }}</textarea>
         </div>
+        
+        {{ form.image.label }}
+        {{ form.image(class="form-control") }}
+        <p> {# 위아래에 약간의 여백(Margin)을 부여 #}
+
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>
 </div>

@@ -1,6 +1,6 @@
 # flask에서 Blueprint를 가져온다
 # HTML 렌더링을 위한 render_template을 가져온다
-from flask import Blueprint, render_template, url_for, redirect, request, g, flash
+from flask import Blueprint, render_template, url_for, redirect, request, g, flash, current_app
 # pybo.models 경로에서 Question(테이블 이름)을 가져온다
 from pybo.models import Question, Answer, User, question_voter
 
@@ -9,10 +9,14 @@ from datetime import datetime
 from pybo import db
 from pybo.views.auth_views import login_required
 from sqlalchemy import func, distinct # func 파이썬에세 SQL 함수를 사용 가능하게 도와준다
+from werkzeug.utils import secure_filename # DB 경로 저장 처리
+import os
+import uuid
 
 # 'question'이라는 이름의 블루프린트를 생성하고, 이 블루프린트의 모든 URL 시작점(/question)을 지정
 bp = Blueprint('question', __name__, url_prefix='/question')
 
+# 공통으로 사용하는 내용을 변수화
 per_page_num = 10
 default_page = 1
 
@@ -79,8 +83,43 @@ def detail(question_id):
 def create():
     form = QuestionForm()
     if request.method == 'POST' and form.validate_on_submit():
+
+        # to apply image - check log
+        border_for_log = 50
+        print("=" * border_for_log)
+        print("request.files :", request.files)
+        print("image.data    :", form.image.data)
+        print("filename      :", form.image.data.filename if form.image.data else None)
+        print("root_path     :", current_app.root_path) # 현재 실행하고 있는 flask app에 접근하기 위한 객체(current_app)
+        print("=" * border_for_log)
+
+        # 폼에서 전송된 이미지 파일
+        image_file = form.image.data
+        image_path = None
+
+        if image_file:
+            # 저장 경로 : 오늘 날짜로 폴더 생성
+            today = datetime.now().strftime('%Y%m%d')
+            upload_folder = os.path.join(current_app.root_path, 'static/photo', today)
+            os.makedirs(upload_folder, exist_ok=True)
+
+            # 파일 저장
+            # 사용자가 업로드한 파일명을 운영체제에서 안전하게 사용할 수 있는 형태로 변환하여, 
+            # 경로 조작(Path Traversal) 등의 보안 위험을 줄여 주는 함수
+            filename = secure_filename(image_file.filename)
+            print("filename ====> " , filename)
+
+            ext = os.path.splitext(filename)[1]
+            filename = f"{uuid.uuid4()}{ext}"
+            
+            file_path = os.path.join(upload_folder, filename)
+            image_file.save(file_path)
+
+            # DB에 저장할 경로 (static 기준 상대경로)
+            image_path = f'photo/{today}/{filename}'            
+
         # 등록할 내용을 Question table에 넣어서 등록한다
-        target_question = Question(subject=form.subject.data, content=form.content.data, create_date=datetime.now(), user= g.user)
+        target_question = Question(subject=form.subject.data, content=form.content.data, create_date=datetime.now(), user= g.user, image_path=image_path)
         log_temp = target_question.__repr__()
         print(log_temp)
         db.session.add(target_question)
