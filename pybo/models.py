@@ -41,7 +41,7 @@ class Question(db.Model):
     # 쉘이나 로그에서 객체를 보기 쉽게 출력해주는 메서드
     def __repr__(self):
         if self.subject: # subject에 글자가 들어있다면(슬라이싱중 index 에러방어)
-            subject_preview = self.subject[:10]
+            subject_preview = self.subject[:50]
         else: # subject가 비어있거나 None이라면
             subject_preview = "No Title"
         return f'<Question {self.user_id}: {subject_preview}>'
