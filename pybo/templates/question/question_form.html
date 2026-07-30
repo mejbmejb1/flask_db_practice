@@ -28,12 +28,11 @@
             <label for="content" class="form-label">내용</label>
             <textarea class="form-control" name="content" id="content" rows="10">{{ form.content.data or '' }}</textarea>
         </div>
-        
-        {{ form.image.label }}
-        {{ form.image(class="form-control") }}
-        <p> {# 위아래에 약간의 여백(Margin)을 부여 #}
-
-        <button type="submit" class="btn btn-primary">저장하기</button>
+        <div>
+            {{ form.image.label }}
+            {{ form.image(class="form-control", multiple=True, accept="image/*") }}
+            {{ form.submit(class="btn btn-primary mt-3") }}
+        </div>
     </form>
 </div>
 {% endblock %}

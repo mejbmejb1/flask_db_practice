@@ -30,7 +30,7 @@ class Question(db.Model):
     content = db.Column(db.Text(), nullable=False) 
     create_date = db.Column(db.DateTime(), nullable=False) # DateTime을 받아오며 null을 허용하지 않겠다
     # 업로드된 이미지 경로 추가
-    image_path = db.Column(db.String(max_string), nullable=True)
+    image_path = db.Column(db.Text(), nullable=True)
     # 글쓴이 외래키 및 관계 설정 추가
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('question_set'))
