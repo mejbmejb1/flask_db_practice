@@ -45,11 +45,12 @@ def modify(answer_id):
 def delete(answer_id):
     answer = Answer.query.get_or_404(answer_id)
     question_id = answer.question.id
-    if g.user != answer.user:
-        flash('삭제권한이 없습니다')
-    else:
+
+    if g.user and ( (g.user == answer.user) or (g.user.username == 'admin') ):
         db.session.delete(answer)
         db.session.commit()
+    else:
+        flash('답변 삭제권한이 없습니다')
     return redirect(url_for('question.detail', question_id=question_id))
 
 @bp.route('/vote/<int:answer_id>/')

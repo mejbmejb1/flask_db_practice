@@ -45,11 +45,12 @@ def modify_question(comment_id):
 def delete_question(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     question_id = comment.question.id
-    if g.user != comment.user:
-        flash('삭제권한이 없습니다')
-    else:
+    if g.user and ( (g.user == comment.user) or (g.user.username == 'admin') ):
         db.session.delete(comment)
         db.session.commit()
+    else:
+        flash('질문 삭제권한이 없습니다')
+
     return redirect(url_for('question.detail', question_id=question_id))
 
 # 답변 댓글 등록
@@ -90,9 +91,10 @@ def modify_answer(comment_id):
 def delete_answer(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     question_id = comment.answer.question.id
-    if g.user != comment.user:
-        flash('삭제권한이 없습니다')
-    else:
+
+    if g.user and ( (g.user == comment.user) or (g.user.username == 'admin') ):
         db.session.delete(comment)
         db.session.commit()
+    else:
+        flash('답변 삭제권한이 없습니다')
     return redirect(url_for('question.detail', question_id=question_id))

@@ -143,11 +143,13 @@ def modify(question_id):
 @login_required
 def delete(question_id):
     question = Question.query.get_or_404(question_id)
-    if g.user != question.user:
+
+    if g.user and ( (g.user == question.user) or (g.user.username == 'admin') ):
+        db.session.delete(question)
+        db.session.commit()
+    else:
         flash('삭제권한이 없습니다')
         return redirect(url_for('question.detail', question_id=question_id))
-    db.session.delete(question)
-    db.session.commit()
     return redirect(url_for('question._list'))
 
 @bp.route('/vote/<int:question_id>/')
